@@ -1,0 +1,8 @@
+{
+  "exports": {
+    "javascript": "gerrit.js",
+    "knockoutTemplates": {
+      "gerrit": "gerrit.html"
+    }
+  }
+}

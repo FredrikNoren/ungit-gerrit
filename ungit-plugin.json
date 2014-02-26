@@ -1,0 +1,5 @@
+{
+  "name": "gerrit",
+	"serverScript": "backend.js",
+  "disabled": false
+}
