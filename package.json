@@ -1,6 +1,6 @@
 {
   "name": "ungit-gerrit",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Ungit gerrit plugin",
   "main": "index.js",
   "scripts": {
