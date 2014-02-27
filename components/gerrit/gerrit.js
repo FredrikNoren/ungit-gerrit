@@ -11,7 +11,7 @@ components.register('gerrit', function(args) {
 
 var GerritIntegrationViewModel = function(repository) {
   this.repository = repository;
-  this.app = repository.app;
+  this.server = repository.server;
   this.showInitCommmitHook = ko.observable(false);
   this.status = ko.observable('loading');
   this.initGerritHookProgressBar = components.create('progressBar', {
@@ -39,7 +39,7 @@ GerritIntegrationViewModel.prototype.updateNode = function(parentElement) {
 
 GerritIntegrationViewModel.prototype.updateCommitHook = function() {
   var self = this;
-  this.app.get('/gerrit/commithook', { path: this.repository.repoPath }, function(err, hook) {
+  this.server.get('/plugins/gerrit/commithook', { path: this.repository.repoPath }, function(err, hook) {
     self.showInitCommmitHook(!hook.exists);
   });
 }
@@ -47,7 +47,7 @@ GerritIntegrationViewModel.prototype.updateChanges = function() {
   var self = this;
   self.status('loading');
   this.changesLoader.start();
-  this.app.get('/gerrit/changes', { path: this.repository.repoPath }, function(err, changes) {
+  this.server.get('/plugins/gerrit/changes', { path: this.repository.repoPath }, function(err, changes) {
     self.changesLoader.stop();
     if (err) {
       self.status('failed');
@@ -60,7 +60,7 @@ GerritIntegrationViewModel.prototype.updateChanges = function() {
 GerritIntegrationViewModel.prototype.initCommitHook = function() {
   var self = this;
   this.initGerritHookProgressBar.start();
-  this.app.post('/gerrit/commithook', { path: this.repository.repoPath }, function(err) {
+  this.server.post('/plugins/gerrit/commithook', { path: this.repository.repoPath }, function(err) {
     self.updateCommitHook();
     self.initGerritHookProgressBar.stop();
   });
@@ -86,7 +86,7 @@ GerritIntegrationViewModel.prototype.pushForReview = function() {
   var change = this.getChangeFromNode(this.repository.graph.HEAD());
   if (change) branch = change.data.branch;
 
-  this.app.post('/push', { path: this.repository.graph.repoPath, remote: this.repository.remotes.currentRemote(), remoteBranch: 'refs/for/' + branch }, function(err, res) {
+  this.server.post('/push', { path: this.repository.graph.repoPath, remote: this.repository.remotes.currentRemote(), remoteBranch: 'refs/for/' + branch }, function(err, res) {
     self.updateChanges();
     self.pushingProgressBar.stop();
   });
@@ -95,7 +95,7 @@ GerritIntegrationViewModel.prototype.pushForReview = function() {
 var GerritChangeViewModel = function(gerritIntegration, args) {
   this.gerritIntegration = gerritIntegration;
   this.repository = gerritIntegration.repository;
-  this.app = gerritIntegration.app;
+  this.server = gerritIntegration.server;
   this.subject = args.subject;
   this.ownerName = args.owner.name;
   this.sha1 = args.sha1;
@@ -115,8 +115,8 @@ var GerritChangeViewModel = function(gerritIntegration, args) {
 GerritChangeViewModel.prototype.checkout = function() {
   var self = this;
   this.checkingOutProgressBar.start();
-  this.app.post('/fetch', { path: this.gerritIntegration.repository.repoPath, remote: self.gerritIntegration.repository.remotes.currentRemote(), ref: this.data.currentPatchSet.ref }, function(err) {
-    self.app.post('/checkout', { path: self.gerritIntegration.repository.repoPath, name: 'FETCH_HEAD' }, function(err) {
+  this.server.post('/fetch', { path: this.gerritIntegration.repository.repoPath, remote: self.gerritIntegration.repository.remotes.currentRemote(), ref: this.data.currentPatchSet.ref }, function(err) {
+    self.server.post('/checkout', { path: self.gerritIntegration.repository.repoPath, name: 'FETCH_HEAD' }, function(err) {
       self.checkingOutProgressBar.stop();
     });
   });
@@ -124,8 +124,8 @@ GerritChangeViewModel.prototype.checkout = function() {
 GerritChangeViewModel.prototype.cherryPick = function() {
   var self = this;
   this.cherryPickingProgressBar.start();
-  this.app.post('/fetch', { path: this.gerritIntegration.repository.repoPath, remote: self.gerritIntegration.repository.remotes.currentRemote(), ref: this.data.currentPatchSet.ref }, function(err) {
-    self.app.post('/cherrypick', { path: self.gerritIntegration.repository.repoPath, name: 'FETCH_HEAD' }, function(err) {
+  this.server.post('/fetch', { path: this.gerritIntegration.repository.repoPath, remote: self.gerritIntegration.repository.remotes.currentRemote(), ref: this.data.currentPatchSet.ref }, function(err) {
+    self.server.post('/cherrypick', { path: self.gerritIntegration.repository.repoPath, name: 'FETCH_HEAD' }, function(err) {
       self.cherryPickingProgressBar.stop();
     });
   });

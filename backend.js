@@ -5,7 +5,7 @@ var os = require('os');
 var child_process = require('child_process');
 var path = require('path');
 
-module.exports = function initGerritPlugin(env) {
+exports.install = function(env) {
     var app = env.app;
     var ensureAuthenticated = env.ensureAuthenticated;
     var ensurePathExists = env.ensurePathExists;
