@@ -10,7 +10,6 @@ exports.install = function(env) {
     var ensureAuthenticated = env.ensureAuthenticated;
     var ensurePathExists = env.ensurePathExists;
     var git = env.git;
-    var config = env.config;
 
     app.get(env.httpPath + '/commithook', ensureAuthenticated, ensurePathExists, function(req, res) {
       var repoPath = req.param('path');
@@ -52,8 +51,8 @@ exports.install = function(env) {
           var sshConfig = {
             host: remote.host,
             port: remote.port,
-            username: remote.username || config.sshUsername,
-            agent: config.sshAgent,
+            username: remote.username || env.pluginConfig.sshUsername,
+            agent: env.pluginConfig.sshAgent,
           }
           if (!sshConfig.agent) {
             if (os.type() == 'Windows_NT') sshConfig.agent = 'pageant';
