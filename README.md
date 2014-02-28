@@ -6,7 +6,8 @@ Installation
 ------------
 1. Go to your ungit plugin dir (defaults to ~/.ungit/plugins, create it if it doesn't exsist).
 2. `git clone https://github.com/FredrikNoren/ungit-gerrit.git`
-3. Restart Ungit
+3. `npm install` in the ungit-gerrit folder
+4. Restart Ungit
 
 Configuration
 -------------
