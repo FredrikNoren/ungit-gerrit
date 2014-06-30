@@ -59,7 +59,8 @@ exports.install = function(env) {
             else sshConfig.agent = '' + process.env.SSH_AUTH_SOCK;
           }
           gerrit(sshConfig, command, res, function(err, result) {
-            if (err) return;
+            if (err || result.indexOf('Invalid command') != -1) 
+              return res.json(400, err || { error: result });
             result = result.split('\n').filter(function(r) { return r.trim(); });
             result = result.map(function(r) { return JSON.parse(r); });
             res.json(result);
