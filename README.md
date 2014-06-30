@@ -1,6 +1,6 @@
 Gerrit plugin for Ungit
 =======================
-Adds a gerrit integration box to Ungit
+Adds a [gerrit](https://code.google.com/p/gerrit/) integration panel to Ungit.
 
 Installation
 ------------
