@@ -5,10 +5,19 @@ var os = require('os');
 var child_process = require('child_process');
 var path = require('path');
 
+
+function ensurePathExists(req, res, next) {
+  var path = req.param('path');
+  if (!fs.existsSync(path)) {
+    res.json(400, { error: 'No such path: ' + path, errorCode: 'no-such-path' });
+  } else {
+    next();
+  }
+}
+
 exports.install = function(env) {
     var app = env.app;
     var ensureAuthenticated = env.ensureAuthenticated;
-    var ensurePathExists = env.ensurePathExists;
     var git = env.git;
 
     app.get(env.httpPath + '/commithook', ensureAuthenticated, ensurePathExists, function(req, res) {
